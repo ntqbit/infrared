@@ -4,7 +4,7 @@ use core::marker::PhantomData;
 use embedded_hal::digital::v2::InputPin;
 
 use crate::{
-    receiver::{DecoderBuilder, DecodingError, Error, NoPin, ProtocolDecoder},
+    receiver::{DecoderBuilder, Error, NoPin, ProtocolDecoder},
     Protocol,
 };
 
@@ -44,7 +44,7 @@ where
         }
     }
 
-    pub fn poll_base(&mut self, edge: bool) -> Result<Option<Cmd>, DecodingError> {
+    pub fn poll_base(&mut self, edge: bool) -> Result<Option<Cmd>, Proto::Error> {
         self.clock = self.clock.wrapping_add(1);
 
         if edge == self.edge {
@@ -70,7 +70,7 @@ where
         Self::with_input(freq, NoPin)
     }
 
-    pub fn poll(&mut self, edge: bool) -> Result<Option<Cmd>, DecodingError> {
+    pub fn poll(&mut self, edge: bool) -> Result<Option<Cmd>, Proto::Error> {
         self.poll_base(edge)
     }
 }
@@ -79,6 +79,7 @@ where
 impl<Proto, Pin, Cmd> PeriodicPoll<Proto, Pin, Cmd>
 where
     Proto: DecoderBuilder<u32>,
+    Error<Pin::Error>: From<Proto::Error>,
     Pin: InputPin,
     Cmd: From<<Proto as Protocol>::Cmd>,
 {

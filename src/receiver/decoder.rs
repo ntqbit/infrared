@@ -1,10 +1,7 @@
 use core::fmt::Debug;
 
 use crate::{
-    receiver::{
-        time::{InfraMonotonic, PulseSpans},
-        DecodingError,
-    },
+    receiver::time::{InfraMonotonic, PulseSpans},
     Protocol,
 };
 
@@ -28,7 +25,7 @@ where
     /// Notify the state machine of a new event
     /// * `edge`: true = positive edge, false = negative edge
     /// * `dt` : Duration since last event
-    fn event(&mut self, edge: bool, dt: Mono::Duration) -> State;
+    fn event(&mut self, edge: bool, dt: Mono::Duration) -> State<Proto::Error>;
 
     /// Get the command
     /// Returns the data if State == Done, otherwise None
@@ -45,7 +42,7 @@ where
         &mut self,
         edge: bool,
         dt: Mono::Duration,
-    ) -> Result<Option<Proto::Cmd>, DecodingError> {
+    ) -> Result<Option<Proto::Cmd>, Proto::Error> {
         match self.event(edge, dt) {
             State::Idle | State::Receiving => Ok(None),
             State::Done => {
@@ -64,7 +61,7 @@ where
 #[derive(PartialEq, Eq, Copy, Clone, Debug)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 /// Protocol decoder status
-pub enum State {
+pub enum State<E> {
     /// Idle
     Idle,
     /// Receiving data
@@ -72,5 +69,5 @@ pub enum State {
     /// Command successfully decoded
     Done,
     /// Error while decoding
-    Error(DecodingError),
+    Error(E),
 }

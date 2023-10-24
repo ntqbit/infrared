@@ -1,6 +1,6 @@
 //! Philips Rc6
 
-use crate::protocol::Protocol;
+use crate::{protocol::Protocol, receiver::DecodingError};
 
 mod cmd;
 mod decoder;
@@ -15,4 +15,5 @@ pub struct Rc6 {}
 
 impl Protocol for Rc6 {
     type Cmd = Rc6Command;
+    type Error = DecodingError;
 }

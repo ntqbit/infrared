@@ -32,6 +32,7 @@ pub(crate) mod utils;
 /// Infrared protocol
 pub trait Protocol {
     type Cmd;
+    type Error;
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]

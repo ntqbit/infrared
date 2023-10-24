@@ -19,7 +19,7 @@ pub use raw::NecDebugCmd;
 pub use samsung::SamsungNecCommand;
 pub use standard::NecCommand;
 
-use crate::protocol::Protocol;
+use crate::{protocol::Protocol, receiver::DecodingError};
 
 /// Nec Receiver with Nec standard bit encoding and Standard timing
 pub struct Nec<C: NecCommandVariant = NecCommand> {
@@ -29,6 +29,7 @@ pub struct Nec<C: NecCommandVariant = NecCommand> {
 
 impl<C: NecCommandVariant> Protocol for Nec<C> {
     type Cmd = C;
+    type Error = DecodingError;
 }
 
 /// Nec variant with Samsung bit encoding and Samsung timing

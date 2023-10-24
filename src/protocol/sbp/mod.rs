@@ -26,6 +26,7 @@ pub struct Sbp;
 
 impl Protocol for Sbp {
     type Cmd = SbpCommand;
+    type Error = DecodingError;
 }
 
 const PULSE: [u32; 8] = [
@@ -133,7 +134,7 @@ pub enum SbpState {
 
 impl<Mono: InfraMonotonic> ProtocolDecoder<Sbp, Mono> for SbpDecoder<Mono> {
     #[rustfmt::skip]
-    fn event(&mut self, rising: bool, dt: Mono::Duration) -> State {
+    fn event(&mut self, rising: bool, dt: Mono::Duration) -> State<DecodingError> {
         use SbpPulse::*;
         use SbpState::*;
 
@@ -185,8 +186,8 @@ impl<Mono: InfraMonotonic> ProtocolDecoder<Sbp, Mono> for SbpDecoder<Mono> {
     }
 }
 
-impl From<SbpState> for State {
-    fn from(state: SbpState) -> State {
+impl From<SbpState> for State<DecodingError> {
+    fn from(state: SbpState) -> State<DecodingError> {
         use SbpState::*;
         match state {
             Init => State::Idle,

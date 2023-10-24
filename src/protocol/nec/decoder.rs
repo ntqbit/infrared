@@ -69,7 +69,7 @@ pub enum NecState {
     Err(DecodingError),
 }
 
-impl From<NecState> for State {
+impl From<NecState> for State<DecodingError> {
     fn from(ns: NecState) -> Self {
         use NecState::*;
         match ns {
@@ -87,7 +87,7 @@ where
     Cmd: NecCommandVariant,
 {
     #[rustfmt::skip]
-    fn event(&mut self, rising: bool, dur: Mono::Duration) -> State {
+    fn event(&mut self, rising: bool, dur: Mono::Duration) -> State<DecodingError> {
 
         use NecState::*;
         use PulseWidth::*;

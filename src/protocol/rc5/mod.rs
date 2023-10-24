@@ -6,7 +6,7 @@ pub mod decoder;
 use crate::{
     cmd::{AddressCommand, Command},
     protocol::Protocol,
-    ProtocolId,
+    ProtocolId, receiver::DecodingError,
 };
 
 pub mod encoder;
@@ -28,6 +28,7 @@ pub struct Rc5;
 
 impl Protocol for Rc5 {
     type Cmd = Rc5Command;
+    type Error = DecodingError;
 }
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]

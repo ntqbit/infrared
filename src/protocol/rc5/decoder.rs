@@ -24,7 +24,7 @@ impl<Mono: InfraMonotonic> DecoderBuilder<Mono> for Rc5 {
 }
 
 impl<Mono: InfraMonotonic> ProtocolDecoder<Rc5, Mono> for Rc5Decoder<Mono> {
-    fn event(&mut self, rising: bool, delta_t: Mono::Duration) -> State {
+    fn event(&mut self, rising: bool, delta_t: Mono::Duration) -> State<DecodingError> {
         use Rc5State::*;
 
         // Find this delta t in the defined ranges
@@ -99,7 +99,7 @@ pub enum Rc5State {
     Err(DecodingError),
 }
 
-impl From<Rc5State> for State {
+impl From<Rc5State> for State<DecodingError> {
     fn from(rs: Rc5State) -> Self {
         match rs {
             Rc5State::Idle => State::Idle,

@@ -189,7 +189,7 @@ where
         &mut self,
         dt: Mono::Duration,
         edge: bool,
-    ) -> Result<Option<Cmd>, DecodingError> {
+    ) -> Result<Option<Cmd>, Proto::Error> {
         // Update state machine
         let state = self.decoder.event(edge, dt);
 
@@ -254,7 +254,7 @@ where
     Mono: InfraMonotonic,
     Cmd: From<Proto::Cmd>,
 {
-    pub fn event(&mut self, dt: Mono::Duration, edge: bool) -> Result<Option<Cmd>, DecodingError> {
+    pub fn event(&mut self, dt: Mono::Duration, edge: bool) -> Result<Option<Cmd>, Proto::Error> {
         Ok(self.event_edge(dt, edge)?.map(Into::into))
     }
 
@@ -262,7 +262,7 @@ where
         &mut self,
         t: Mono::Instant,
         edge: bool,
-    ) -> Result<Option<Cmd>, DecodingError> {
+    ) -> Result<Option<Cmd>, Proto::Error> {
         let dt = Mono::checked_sub(t, self.prev_instant).unwrap_or(Mono::ZERO_DURATION);
         self.prev_instant = t;
 
@@ -274,6 +274,7 @@ where
 impl<Proto, Pin, Mono, Cmd> Receiver<Proto, Pin, Mono, Cmd>
 where
     Proto: DecoderBuilder<Mono>,
+    Error<Pin::Error>: From<Proto::Error>,
     Pin: InputPin,
     Mono: InfraMonotonic,
     Cmd: From<Proto::Cmd>,
